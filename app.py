@@ -170,7 +170,12 @@ def status():
 @app.route('/')
 def home():
     """Serve the main HTML page if it exists alongside this file."""
-    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dalal-street-live.html')
+    # Try common filenames — handles Windows short-name truncation issues
+    base = os.path.dirname(os.path.abspath(__file__))
+    for name in ('index.html', 'dalal-street-live.html', 'DALAL-~~1.HTM'):
+        html_path = os.path.join(base, name)
+        if os.path.exists(html_path):
+            break
     if os.path.exists(html_path):
         with open(html_path, 'r', encoding='utf-8') as f:
             return f.read(), 200, {'Content-Type': 'text/html'}
